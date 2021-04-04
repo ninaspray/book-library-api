@@ -43,8 +43,14 @@ describe('/books', () => {
           genre: 'Gonzo Jounalism',
           ISBN: '9780007161232',
         }),
-        //Reader.create({ name: 'Arya Stark', email: 'vmorgul@me.com', password: 'carrot' }),
-        //Reader.create({ name: 'Lyra Belacqua', email: 'darknorth123@msn.org', password: 'parsnip' }),
+        Book.create({ title: 'The Devil Wears Prada',
+        author: 'Lauren Weisberger',
+        genre: 'Novel Fiction',
+        ISBN: '9780007156108', }),
+        Book.create({ title: 'The Woman In Black',
+        author: 'Susan Hill',
+        genre: 'Novel Horro',
+        ISBN: '9780241109878', }),
       ]);
     });
 
@@ -53,15 +59,79 @@ describe('/books', () => {
         const response = await request(app).get('/books');
 
         expect(response.status).to.equal(200);
-        expect(response.body.length).to.equal(1);
+        expect(response.body.length).to.equal(3);
 
         response.body.forEach((book) => {
           const expected = books.find((a) => a.id === book.id);
-
+          
+          expect(response.status).to.equal(200);
           expect(book.title).to.equal(expected.title);
           expect(book.author).to.equal(expected.author);
           expect(book.genre).to.equal(expected.genre);
           expect(book.ISBN).to.equal(expected.ISBN);
         });
       });
-    });});});
+      
+      describe('GET /books/:id', () => {
+        it('gets books record by id', async () => {
+          const book = books[0];
+          const response = await request(app).get(`/books/${book.id}`);
+  
+          expect(response.status).to.equal(200);
+          expect(book.title).to.equal(book.title);
+          expect(book.author).to.equal(book.author);
+          expect(book.genre).to.equal(book.genre);
+          expect(book.ISBN).to.equal(book.ISBN);
+        });
+  
+        it('returns a 404 if the book does not exist', async () => {
+          const response = await request(app).get('/books/12345');
+  
+          expect(response.status).to.equal(404);
+          expect(response.body.error).to.equal('The book could not be found.');
+        });
+      });
+  
+      describe('PATCH /books/:id', () => {
+        it('updates books Author by id', async () => {
+          const book = books[0];
+          const response = await request(app)
+            .patch(`/books/${book.id}`)
+            .send({ author: 'Hunter.S.Thompson' });
+          const updatedBookRecord = await Book.findByPk(book.id, {
+            raw: true,
+          });
+  
+          expect(response.status).to.equal(200);
+          expect(updatedBookRecord.author).to.equal('Hunter.S.Thompson');
+        });
+  
+        it('returns a 404 if the book does not exist', async () => {
+          const response = await request(app)
+            .patch('/books/12345')
+            .send({ author: 'Nina Spray' });
+  
+          expect(response.status).to.equal(404);
+          expect(response.body.error).to.equal('The book could not be found.');
+        });
+      });
+  
+      describe('DELETE /books/:id', () => {
+        it('deletes book record by id', async () => {
+          const book = books[0];
+          const response = await request(app).delete(`/books/${book.id}`);
+          const deletedBook = await Book.findByPk(book.id, { raw: true });
+  
+          expect(response.status).to.equal(204);
+          expect(deletedBook).to.equal(null);
+        });
+  
+        it('returns a 404 if the book does not exist', async () => {
+          const response = await request(app).delete('/books/12345');
+          expect(response.status).to.equal(404);
+          expect(response.body.error).to.equal('The book could not be found.');
+        });
+      });
+    });
+  });
+});  
