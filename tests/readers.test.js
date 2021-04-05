@@ -14,7 +14,7 @@ describe('/readers', () => {
         const response = await request(app).post('/readers').send({
           name: 'Elizabeth Bennet',
           email: 'future_ms_darcy@gmail.com',
-          password: 'pumpkin',
+          password: 'pumpkin1',
         });
         const newReaderRecord = await Reader.findByPk(response.body.id, {
           raw: true,
@@ -23,7 +23,7 @@ describe('/readers', () => {
         expect(response.body.name).to.equal('Elizabeth Bennet');
         expect(newReaderRecord.name).to.equal('Elizabeth Bennet');
         expect(newReaderRecord.email).to.equal('future_ms_darcy@gmail.com');
-        expect(newReaderRecord.password).to.equal('pumpkin');
+        expect(newReaderRecord.password).to.equal('pumpkin1');
         //console.log(response.body) - Testing Password
       });
     });
@@ -39,10 +39,10 @@ describe('/readers', () => {
         Reader.create({
           name: 'Elizabeth Bennet',
           email: 'future_ms_darcy@gmail.com',
-          password: 'pumpkin',
+          password: 'pumpkin1',
         }),
-        Reader.create({ name: 'Arya Stark', email: 'vmorgul@me.com', password: 'carrot' }),
-        Reader.create({ name: 'Lyra Belacqua', email: 'darknorth123@msn.org', password: 'parsnip' }),
+        Reader.create({ name: 'Arya Stark', email: 'vmorgul@me.com', password: 'carrot12' }),
+        Reader.create({ name: 'Lyra Belacqua', email: 'darknorth123@msn.org', password: 'parsnip12' }),
       ]);
     });
 

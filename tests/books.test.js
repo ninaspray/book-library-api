@@ -14,19 +14,23 @@ describe('/books', () => {
         const response = await request(app).post('/books').send({
           title: 'Fear and Loathing in Las Vegas',
           author: 'Hunter S Thompson',
-          genre: 'Gonzo Jounalism',
-          ISBN: '9780007161232'
+          genre: 'Journalism',
+          ISBN: '9780007161232',
         });
         const newBookRecord = await Book.findByPk(response.body.id, {
           raw: true,
         });
         expect(response.status).to.equal(201);
         expect(response.body.title).to.equal('Fear and Loathing in Las Vegas');
+        expect(response.body.author).to.equal('Hunter S Thompson');
+        expect(response.body.genre).to.equal('Journalism');
+        expect(response.body.ISBN).to.equal('9780007161232');
+
         expect(newBookRecord.title).to.equal('Fear and Loathing in Las Vegas');
         expect(newBookRecord.author).to.equal('Hunter S Thompson');
-        expect(newBookRecord.genre).to.equal('Gonzo Jounalism');
+        expect(newBookRecord.genre).to.equal('Journalism');
         expect(newBookRecord.ISBN).to.equal('9780007161232');
-        //console.log(response.body) - Testing Password
+        
       });
     });
   });
@@ -40,7 +44,7 @@ describe('/books', () => {
         Book.create({
           title: 'Fear and Loathing in Las Vegas',
           author: 'Hunter S Thompson',
-          genre: 'Gonzo Jounalism',
+          genre: 'Journalism',
           ISBN: '9780007161232',
         }),
         Book.create({ title: 'The Devil Wears Prada',
@@ -49,7 +53,7 @@ describe('/books', () => {
         ISBN: '9780007156108', }),
         Book.create({ title: 'The Woman In Black',
         author: 'Susan Hill',
-        genre: 'Novel Horro',
+        genre: 'Novel Horror',
         ISBN: '9780241109878', }),
       ]);
     });
