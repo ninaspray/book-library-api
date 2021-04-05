@@ -11,11 +11,22 @@ const getModel = (model) => {
   return models[model];
 };
 
+const removePassword = (obj) => {
+    if (obj.hasOwnProperty('password')) {
+      delete obj.password;
+    }
+  
+    return obj;
+  };
+
 const getAllItems = (res, model) => {
   const Model = getModel(model);
-
-  return Model.findAll().then((allItems) => {
-    res.status(200).json(allItems);
+  
+  return Model.findAll().then((items) => {
+    const itemsWithoutPassword = items.map((item) =>
+      removePassword(item.dataValues)
+    );
+    res.status(200).json(itemsWithoutPassword);
   });
 };
 
@@ -23,13 +34,19 @@ const createItem = (res, model, item) => {
   const Model = getModel(model);
 
   return Model.create(item)
-    .then((newItemCreated) => res.status(201).json(newItemCreated))
+  
+  .then((newItemCreated) => {
+    const itemWithoutPassword = removePassword(newItemCreated.dataValues);
+
+    res.status(201).json(itemWithoutPassword);
+  })
     .catch((error) => {
       const errorMessages = error.errors.map((e) => e.message);
 
       return res.status(400).json({ errors: errorMessages });
     });
 };
+
 
 const updateItem = (res, model, item, id) => {
   const Model = getModel(model);
